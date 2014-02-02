@@ -1,0 +1,21 @@
+#!perl
+
+use strict;
+use warnings;
+use utf8;
+use WWW::NHKProgram::Area qw/fetch_area_id/;
+
+use Test::More;
+
+subtest 'Fetch area id' => sub {
+    subtest 'Return ID' => sub {
+        is fetch_area_id('040'), '040';
+        is fetch_area_id('260'), '260';
+    };
+    subtest 'Retrieve area id by area name' => sub {
+        is fetch_area_id('仙台'), '040';
+        is fetch_area_id('京都'), '260';
+    };
+};
+
+done_testing;

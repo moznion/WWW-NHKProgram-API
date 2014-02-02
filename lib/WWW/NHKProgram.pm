@@ -10,6 +10,8 @@ use Class::Accessor::Lite::Lazy (
     ro_lazy => [qw/furl/],
 );
 
+use WWW::NHKProgram::Area qw/fetch_area_id/;
+
 our $VERSION = "0.01";
 my  $PACKAGE = __PACKAGE__;
 
@@ -19,7 +21,7 @@ sub list {
     my ($self, $arg) = @_;
 
     (my $api = (caller 0)[3]) =~ s/${PACKAGE}:://;
-    my $area    = $arg->{area};
+    my $area    = fetch_area_id($arg->{area});
     my $service = $arg->{service};
     my $date    = $arg->{date};
 
@@ -35,7 +37,7 @@ sub genre {
     my ($self, $arg) = @_;
 
     (my $api = (caller 0)[3]) =~ s/${PACKAGE}:://;
-    my $area    = $arg->{area};
+    my $area    = fetch_area_id($arg->{area});
     my $service = $arg->{service};
     my $genre   = $arg->{genre};
     my $date    = $arg->{date};
@@ -52,7 +54,7 @@ sub info {
     my ($self, $arg) = @_;
 
     (my $api = (caller 0)[3]) =~ s/${PACKAGE}:://;
-    my $area    = $arg->{area};
+    my $area    = fetch_area_id($arg->{area});
     my $service = $arg->{service};
     my $id      = $arg->{id};
 
@@ -68,7 +70,7 @@ sub now {
     my ($self, $arg) = @_;
 
     (my $api = (caller 0)[3]) =~ s/${PACKAGE}:://;
-    my $area    = $arg->{area};
+    my $area    = fetch_area_id($arg->{area});
     my $service = $arg->{service};
 
     my $res = $self->furl->get(
