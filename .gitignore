@@ -25,3 +25,5 @@ cover_db/
 MYMETA.*
 
 /WWW-NHKProgram-*
+
+eg/_*
