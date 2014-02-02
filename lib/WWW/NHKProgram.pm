@@ -2,6 +2,7 @@ package WWW::NHKProgram;
 use 5.008005;
 use strict;
 use warnings;
+use Carp;
 use Furl;
 use JSON ();
 use Class::Accessor::Lite::Lazy (
@@ -10,7 +11,7 @@ use Class::Accessor::Lite::Lazy (
     ro_lazy => [qw/furl/],
 );
 
-use WWW::NHKProgram::Area qw/fetch_area_id/;
+use WWW::NHKProgram::Area    qw/fetch_area_id/;
 use WWW::NHKProgram::Service qw/fetch_service_id/;
 use WWW::NHKProgram::Date;
 
@@ -32,6 +33,7 @@ sub list {
         "$api/$area/$service/$date.json" .
         "?key=" .  $self->api_key
     );
+    $self->_catch_error($res);
     return JSON::decode_json($res->{content})->{list}->{$service};
 }
 
@@ -49,13 +51,13 @@ sub genre {
         "$api/$area/$service/$genre/$date.json" .
         "?key=" .  $self->api_key
     );
+    $self->_catch_error($res);
     return JSON::decode_json($res->{content})->{list}->{$service};
 }
 
 sub info {
     my ($self, $arg) = @_;
 
-    (my $api = (caller 0)[3]) =~ s/${PACKAGE}:://;
     my $area    = fetch_area_id($arg->{area});
     my $service = fetch_service_id($arg->{service});
     my $id      = $arg->{id};
@@ -65,6 +67,7 @@ sub info {
         "info/$area/$service/$id.json" .
         "?key=" .  $self->api_key
     );
+    $self->_catch_error($res);
     return JSON::decode_json($res->{content})->{list}->{$service}->[0];
 }
 
@@ -77,10 +80,24 @@ sub now {
 
     my $res = $self->furl->get(
         API_ENDPOINT .
-        "now/$area/$service/.json" .
+        "$api/$area/$service.json" .
         "?key=" .  $self->api_key
     );
+    $self->_catch_error($res);
     return JSON::decode_json($res->{content})->{nowonair_list}->{$service};
+}
+
+sub _catch_error {
+    my ($self, $res) = @_;
+
+    unless ($res->is_success) {
+        my $fault = JSON::decode_json($res->{content})->{fault};
+        my $fault_str = $fault->{faultstring};
+        my $fault_detail = $fault->{detail}->{errorcode};
+        my $error_str = sprintf("[Error] %s: %s (%s)", $res->status_line, $fault_str, $fault_detail);
+        croak $error_str;
+    }
+
 }
 
 # setter of Class::Accessor::Lite::Lazy for `furl`
