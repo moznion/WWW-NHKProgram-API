@@ -15,6 +15,9 @@ subtest 'Fetch area id' => sub {
     subtest 'Retrieve area id by area name' => sub {
         is fetch_area_id('仙台'), '040';
         is fetch_area_id('京都'), '260';
+
+        eval { fetch_area_id('ラピュタ') };
+        ok $@, 'died by illegal city';
     };
 };
 
