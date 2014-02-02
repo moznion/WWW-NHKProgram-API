@@ -67,7 +67,7 @@ use constant AREAS => {
 sub fetch_area_id {
     my $arg = shift;
 
-    if ($arg =~ /\d{3}/) {
+    if ($arg =~ /\A\d{3}\Z/) {
         return $arg;
     }
     return _retrieve_id_by_name($arg);
