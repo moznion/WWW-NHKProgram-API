@@ -11,6 +11,7 @@ use Class::Accessor::Lite::Lazy (
 );
 
 use WWW::NHKProgram::Area qw/fetch_area_id/;
+use WWW::NHKProgram::Date;
 
 our $VERSION = "0.01";
 my  $PACKAGE = __PACKAGE__;
@@ -23,7 +24,7 @@ sub list {
     (my $api = (caller 0)[3]) =~ s/${PACKAGE}:://;
     my $area    = fetch_area_id($arg->{area});
     my $service = $arg->{service};
-    my $date    = $arg->{date};
+    my $date    = WWW::NHKProgram::Date::validate($arg->{date});
 
     my $res = $self->furl->get(
         API_ENDPOINT .
@@ -40,7 +41,7 @@ sub genre {
     my $area    = fetch_area_id($arg->{area});
     my $service = $arg->{service};
     my $genre   = $arg->{genre};
-    my $date    = $arg->{date};
+    my $date    = WWW::NHKProgram::Date::validate($arg->{date});
 
     my $res = $self->furl->get(
         API_ENDPOINT .
