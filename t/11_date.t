@@ -8,8 +8,7 @@ use WWW::NHKProgram::Date;
 use Test::More;
 
 subtest 'It can validate' => sub {
-    eval { WWW::NHKProgram::Date::validate('2014-02-14') };
-    ok !$@, 'Not be raised';
+    is '2014-02-14', WWW::NHKProgram::Date::validate('2014-02-14');
     eval { WWW::NHKProgram::Date::validate('2014/02/14') };
     ok $@, 'Invalid delimiter';
 
