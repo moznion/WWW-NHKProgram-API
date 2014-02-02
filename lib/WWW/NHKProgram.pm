@@ -11,6 +11,7 @@ use Class::Accessor::Lite::Lazy (
 );
 
 use WWW::NHKProgram::Area qw/fetch_area_id/;
+use WWW::NHKProgram::Service qw/fetch_service_id/;
 use WWW::NHKProgram::Date;
 
 our $VERSION = "0.01";
@@ -23,7 +24,7 @@ sub list {
 
     (my $api = (caller 0)[3]) =~ s/${PACKAGE}:://;
     my $area    = fetch_area_id($arg->{area});
-    my $service = $arg->{service};
+    my $service = fetch_service_id($arg->{service});
     my $date    = WWW::NHKProgram::Date::validate($arg->{date});
 
     my $res = $self->furl->get(
@@ -39,7 +40,7 @@ sub genre {
 
     (my $api = (caller 0)[3]) =~ s/${PACKAGE}:://;
     my $area    = fetch_area_id($arg->{area});
-    my $service = $arg->{service};
+    my $service = fetch_service_id($arg->{service});
     my $genre   = $arg->{genre};
     my $date    = WWW::NHKProgram::Date::validate($arg->{date});
 
@@ -56,7 +57,7 @@ sub info {
 
     (my $api = (caller 0)[3]) =~ s/${PACKAGE}:://;
     my $area    = fetch_area_id($arg->{area});
-    my $service = $arg->{service};
+    my $service = fetch_service_id($arg->{service});
     my $id      = $arg->{id};
 
     my $res = $self->furl->get(
@@ -72,7 +73,7 @@ sub now {
 
     (my $api = (caller 0)[3]) =~ s/${PACKAGE}:://;
     my $area    = fetch_area_id($arg->{area});
-    my $service = $arg->{service};
+    my $service = fetch_service_id($arg->{service});
 
     my $res = $self->furl->get(
         API_ENDPOINT .
