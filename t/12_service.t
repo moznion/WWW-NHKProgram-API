@@ -16,7 +16,7 @@ subtest 'Fetch service id' => sub {
         ok $@, "Specified not exists id";
     };
     subtest 'Retrieve service id by service name' => sub {
-        is fetch_service_id('NHKEテレ1'), 'e1';
+        is fetch_service_id('ＮＨＫＥテレ１'), 'e1';
         is fetch_service_id('ラジオ全て'), 'radio';
 
         eval { fetch_service_id('YAPC::ASIA') };
