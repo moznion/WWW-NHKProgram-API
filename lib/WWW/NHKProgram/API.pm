@@ -199,8 +199,7 @@ And following the same (you must C<use utf8;>);
 You can specify Japanese area name and service name as arguments.
 If you want to know more details, please refer to the following;
 
-L<http://api-portal.nhk.or.jp/doc-request#explain_area>
-L<http://api-portal.nhk.or.jp/doc-request#explain_service>
+L<http://api-portal.nhk.or.jp/doc-request>
 
 =item * $client->genre()
 

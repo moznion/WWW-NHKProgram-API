@@ -79,8 +79,7 @@ if you want to get information about NHK program API.
     You can specify Japanese area name and service name as arguments.
     If you want to know more details, please refer to the following;
 
-    [http://api-portal.nhk.or.jp/doc-request#explain_area](http://api-portal.nhk.or.jp/doc-request#explain_area)
-    [http://api-portal.nhk.or.jp/doc-request#explain_service](http://api-portal.nhk.or.jp/doc-request#explain_service)
+    [http://api-portal.nhk.or.jp/doc-request](http://api-portal.nhk.or.jp/doc-request)
 
 - $client->genre()
 
