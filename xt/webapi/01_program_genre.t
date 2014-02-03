@@ -3,13 +3,17 @@
 use strict;
 use warnings;
 use utf8;
+use JSON ();
 use WWW::NHKProgram::API;
 
 use Test::Deep;
 use Test::More;
 
+my $api_key = $ENV{NHK_PROGRAM_API_KEY};
+plan skip_all => "API_KEY is not given." unless $api_key;
+
 my $client = WWW::NHKProgram::API->new(
-    api_key => $ENV{NHK_PROGRAM_API_KEY},
+    api_key => $api_key,
 );
 
 my $expected_first_program = {
