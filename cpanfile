@@ -17,4 +17,5 @@ on test => sub {
 
 on develop => sub {
     requires 'Test::Perl::Critic';
+    requires 'Test::Deep';
 };
