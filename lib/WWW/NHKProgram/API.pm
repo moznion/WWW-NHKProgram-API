@@ -23,14 +23,13 @@ use constant API_ENDPOINT => "http://api.nhk.or.jp/v1/pg/";
 sub list {
     my ($self, $arg) = @_;
 
-    (my $api = (caller 0)[3]) =~ s/${PACKAGE}:://;
     my $area    = fetch_area_id($arg->{area});
     my $service = fetch_service_id($arg->{service});
     my $date    = WWW::NHKProgram::API::Date::validate($arg->{date});
 
     my $res = $self->furl->get(
         API_ENDPOINT .
-        "$api/$area/$service/$date.json" .
+        "list/$area/$service/$date.json" .
         "?key=" .  $self->api_key
     );
     $self->_catch_error($res);
@@ -40,7 +39,6 @@ sub list {
 sub genre {
     my ($self, $arg) = @_;
 
-    (my $api = (caller 0)[3]) =~ s/${PACKAGE}:://;
     my $area    = fetch_area_id($arg->{area});
     my $service = fetch_service_id($arg->{service});
     my $genre   = $arg->{genre};
@@ -48,7 +46,7 @@ sub genre {
 
     my $res = $self->furl->get(
         API_ENDPOINT .
-        "$api/$area/$service/$genre/$date.json" .
+        "genre/$area/$service/$genre/$date.json" .
         "?key=" .  $self->api_key
     );
     $self->_catch_error($res);
@@ -71,16 +69,15 @@ sub info {
     return JSON::decode_json($res->{content})->{list}->{$service}->[0];
 }
 
-sub now {
+sub now_on_air {
     my ($self, $arg) = @_;
 
-    (my $api = (caller 0)[3]) =~ s/${PACKAGE}:://;
     my $area    = fetch_area_id($arg->{area});
     my $service = fetch_service_id($arg->{service});
 
     my $res = $self->furl->get(
         API_ENDPOINT .
-        "$api/$area/$service.json" .
+        "now/$area/$service.json" .
         "?key=" .  $self->api_key
     );
     $self->_catch_error($res);

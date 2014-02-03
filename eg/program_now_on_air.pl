@@ -12,7 +12,7 @@ my $client = WWW::NHKProgram::API->new(
     api_key => '__YOUR_API_KEY__',
 );
 
-my $program_now = $client->now({
+my $program_now = $client->now_on_air({
     area    => 130,
     service => 'g1',
 });
