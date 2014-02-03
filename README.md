@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/moznion/WWW-NHKProgram-API.png?branch=master)](https://travis-ci.org/moznion/WWW-NHKProgram-API)
 # NAME
 
 WWW::NHKProgram::API - API client for NHK program API
