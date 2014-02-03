@@ -22,5 +22,18 @@ subtest 'Get response as hashref certainly' => sub {
     ok $program_now->{following};
 };
 
+subtest 'Get response as raw JSON certainly' => sub {
+    $client->raw(1);
+    my $json = $client->now_on_air({
+        area    => 130,
+        service => 'g1',
+    });
+
+    my $program_now = JSON::decode_json($json)->{nowonair_list}->{g1};
+    ok $program_now->{previous};
+    ok $program_now->{present};
+    ok $program_now->{following};
+};
+
 done_testing;
 

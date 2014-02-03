@@ -8,6 +8,7 @@ use JSON ();
 use Class::Accessor::Lite::Lazy (
     new     => 1,
     ro      => [qw/api_key/],
+    rw      => [qw/raw/],
     ro_lazy => [qw/furl/],
 );
 
@@ -16,7 +17,6 @@ use WWW::NHKProgram::API::Service qw/fetch_service_id/;
 use WWW::NHKProgram::API::Date;
 
 our $VERSION = "0.01";
-my  $PACKAGE = __PACKAGE__;
 
 use constant API_ENDPOINT => "http://api.nhk.or.jp/v1/pg/";
 
@@ -33,6 +33,7 @@ sub list {
         "?key=" .  $self->api_key
     );
     $self->_catch_error($res);
+    return $res->{content} if $self->raw;
     return JSON::decode_json($res->{content})->{list}->{$service};
 }
 
@@ -50,6 +51,7 @@ sub genre {
         "?key=" .  $self->api_key
     );
     $self->_catch_error($res);
+    return $res->{content} if $self->raw;
     return JSON::decode_json($res->{content})->{list}->{$service};
 }
 
@@ -66,6 +68,7 @@ sub info {
         "?key=" .  $self->api_key
     );
     $self->_catch_error($res);
+    return $res->{content} if $self->raw;
     return JSON::decode_json($res->{content})->{list}->{$service}->[0];
 }
 
@@ -81,6 +84,7 @@ sub now_on_air {
         "?key=" .  $self->api_key
     );
     $self->_catch_error($res);
+    return $res->{content} if $self->raw;
     return JSON::decode_json($res->{content})->{nowonair_list}->{$service};
 }
 
@@ -88,6 +92,9 @@ sub _catch_error {
     my ($self, $res) = @_;
 
     unless ($res->is_success) {
+        if ($self->raw) {
+            croak $res->{content};
+        }
         my $fault = JSON::decode_json($res->{content})->{fault};
         my $fault_str = $fault->{faultstring};
         my $fault_detail = $fault->{detail}->{errorcode};
