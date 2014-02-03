@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 use utf8;
-use WWW::NHKProgram::Service qw/fetch_service_id/;
+use WWW::NHKProgram::API::Service qw/fetch_service_id/;
 
 use Test::More;
 

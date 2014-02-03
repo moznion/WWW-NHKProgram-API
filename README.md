@@ -1,12 +1,12 @@
 # NAME
 
-WWW::NHKProgram - Client of NHK program API
+WWW::NHKProgram::API - API client for NHK program API
 
 # SYNOPSIS
 
-    use WWW::NHKProgram;
+    use WWW::NHKProgram::API;
 
-    my $client = WWW::NHKProgram->new(api_key => '__YOUR_API_KEY__');
+    my $client = WWW::NHKProgram::API->new(api_key => '__YOUR_API_KEY__');
 
     # Get program list
     my $program_list = $client->list({
@@ -17,7 +17,8 @@ WWW::NHKProgram - Client of NHK program API
 
 # DESCRIPTION
 
-WWW::NHKProgram is the client of NHK program API.
+WWW::NHKProgram::API is the API client for NHK program API.
+
 Please refer [http://api-portal.nhk.or.jp/ja](http://api-portal.nhk.or.jp/ja)
 if you want to get information about NHK program API.
 

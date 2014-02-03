@@ -1,4 +1,4 @@
-package WWW::NHKProgram::Service;
+package WWW::NHKProgram::API::Service;
 use strict;
 use warnings;
 use utf8;

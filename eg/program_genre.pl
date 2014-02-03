@@ -6,9 +6,9 @@ use utf8;
 use Data::Dumper;
 use FindBin;
 use lib "$FindBin::Bin/../lib";
-use WWW::NHKProgram;
+use WWW::NHKProgram::API;
 
-my $client = WWW::NHKProgram->new(
+my $client = WWW::NHKProgram::API->new(
     api_key => '__YOUR_API_KEY__',
 );
 

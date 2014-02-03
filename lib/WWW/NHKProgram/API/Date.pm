@@ -1,4 +1,4 @@
-package WWW::NHKProgram::Date;
+package WWW::NHKProgram::API::Date;
 use strict;
 use warnings;
 use utf8;

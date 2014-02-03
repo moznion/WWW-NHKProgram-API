@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 use utf8;
-use WWW::NHKProgram::Area qw/fetch_area_id/;
+use WWW::NHKProgram::API::Area qw/fetch_area_id/;
 
 use Test::More;
 
