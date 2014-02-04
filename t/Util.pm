@@ -8,6 +8,7 @@ sub mock_furl_response {
     my ($status, $data) = @_;
 
     return sub {
+        my $original_furl_response_new = *Furl::Response::new{CODE};
         undef *Furl::Response::new;
         *Furl::Response::new = sub {
             my ($class, $minor_version, $code, $message, $headers, $content) = @_;
@@ -21,6 +22,8 @@ sub mock_furl_response {
         };
 
         return Scope::Guard->new(sub {
+            undef *Furl::Response::new;
+            *Furl::Response::new = $original_furl_response_new;
         });
     }
 }
