@@ -117,8 +117,8 @@ subtest 'Get response as raw JSON certainly' => sub {
     $client->raw(1);
 
     my $json = $client->genre({
-        area    => 130,
-        service => 'g1',
+        area    => '東京',
+        service => 'ＮＨＫ総合１',
         genre   => '0000',
         date    => '2014-02-04',
     });
