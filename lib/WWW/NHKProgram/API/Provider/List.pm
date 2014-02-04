@@ -22,7 +22,8 @@ sub call {
             area    => $area,
             service => $service,
             date    => $date,
-        }
+        },
+        $raw,
     );
     return $content if $raw;
     return JSON::decode_json($content)->{list}->{$service};
