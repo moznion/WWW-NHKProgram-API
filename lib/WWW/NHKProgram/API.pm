@@ -207,10 +207,13 @@ Yes,
         service => 'ＮＨＫ総合１',
     });
 
-=item * $client->list()
-=item * $client->genre()
-=item * $client->info()
-=item * $client->now_on_air()
+=item * $client->list_raw()
+
+=item * $client->genre_raw()
+
+=item * $client->info_raw()
+
+=item * $client->now_on_air_raw()
 
 Returns raw JSON response of each API.
 

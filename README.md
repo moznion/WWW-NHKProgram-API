@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/moznion/WWW-NHKProgram-API.png?branch=master)](https://travis-ci.org/moznion/WWW-NHKProgram-API)
+[![Build Status](https://travis-ci.org/moznion/WWW-NHKProgram-API.png?branch=master)](https://travis-ci.org/moznion/WWW-NHKProgram-API) [![Coverage Status](https://coveralls.io/repos/moznion/WWW-NHKProgram-API/badge.png?branch=master)](https://coveralls.io/r/moznion/WWW-NHKProgram-API?branch=master)
 # NAME
 
 WWW::NHKProgram::API - API client for NHK program API
@@ -49,13 +49,11 @@ if you want to get information about NHK program API.
 - WWW::NHKProgram::API->new();
 
     Constructor. You must give API\_KEY through this method.
-    And of course you can also specify the other parameters.
 
     e.g.
 
         my $client = WWW::NHKProgram::API->new(
             api_key => '__YOUR_API_KEY__', # <= MUST!
-            raw     => 1,                  # <= OPTIONAL: you can set raw-mode (default: undef)
         );
 
 - $client->list()
@@ -135,14 +133,12 @@ if you want to get information about NHK program API.
             service => 'ＮＨＫ総合１',
         });
 
-- $client->raw()
+- $client->list\_raw()
+- $client->genre\_raw()
+- $client->info\_raw()
+- $client->now\_on\_air\_raw()
 
-    Setter for `raw`. If you set true value into `raw`, all API methods will return raw JSON (methods usually return hash ref).
-
-        $client->raw(1); # => raw-mode (methods return JSON)
-        $client->raw(0); # => methods return hash ref
-
-    raw option is also set by constructor.
+    Returns raw JSON response of each API.
 
 # FOR DEVELOPERS
 
