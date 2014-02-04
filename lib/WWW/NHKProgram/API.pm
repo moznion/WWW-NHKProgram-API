@@ -5,6 +5,7 @@ use warnings;
 use Carp;
 use Furl;
 use JSON ();
+use Text::Sprintf::Named qw/named_sprintf/;
 use Class::Accessor::Lite::Lazy (
     new     => 1,
     ro      => [qw/api_key/],
@@ -27,14 +28,11 @@ sub list {
     my $service = fetch_service_id($arg->{service});
     my $date    = WWW::NHKProgram::API::Date::validate($arg->{date});
 
-    my $res = $self->furl->get(
-        API_ENDPOINT .
-        "list/$area/$service/$date.json" .
-        "?key=" .  $self->api_key
-    );
-    $self->_catch_error($res);
-    return $res->{content} if $self->raw;
-    return JSON::decode_json($res->{content})->{list}->{$service};
+    my $content = $self->_dispatch("list/%(area)s/%(service)s/%(date)s.json", {
+        area => $area, service => $service, date => $date,
+    });
+    return $content if $self->raw;
+    return JSON::decode_json($content)->{list}->{$service};
 }
 
 sub genre {
@@ -45,14 +43,11 @@ sub genre {
     my $genre   = $arg->{genre};
     my $date    = WWW::NHKProgram::API::Date::validate($arg->{date});
 
-    my $res = $self->furl->get(
-        API_ENDPOINT .
-        "genre/$area/$service/$genre/$date.json" .
-        "?key=" .  $self->api_key
-    );
-    $self->_catch_error($res);
-    return $res->{content} if $self->raw;
-    return JSON::decode_json($res->{content})->{list}->{$service};
+    my $content = $self->_dispatch("genre/%(area)s/%(service)s/%(genre)s/%(date)s.json", {
+        area => $area, service => $service, genre => $genre, date => $date,
+    });
+    return $content if $self->raw;
+    return JSON::decode_json($content)->{list}->{$service};
 }
 
 sub info {
@@ -67,9 +62,11 @@ sub info {
         "info/$area/$service/$id.json" .
         "?key=" .  $self->api_key
     );
-    $self->_catch_error($res);
-    return $res->{content} if $self->raw;
-    return JSON::decode_json($res->{content})->{list}->{$service}->[0];
+    my $content = $self->_dispatch("info/%(area)s/%(service)s/%(id)s.json", {
+        area => $area, service => $service, id => $id,
+    });
+    return $content if $self->raw;
+    return JSON::decode_json($content)->{list}->{$service}->[0];
 }
 
 sub now_on_air {
@@ -78,14 +75,21 @@ sub now_on_air {
     my $area    = fetch_area_id($arg->{area});
     my $service = fetch_service_id($arg->{service});
 
-    my $res = $self->furl->get(
-        API_ENDPOINT .
-        "now/$area/$service.json" .
-        "?key=" .  $self->api_key
-    );
+    my $content = $self->_dispatch("now/%(area)s/%(service)s.json", {
+        area => $area, service => $service,
+    });
+    return $content if $self->raw;
+    return JSON::decode_json($content)->{nowonair_list}->{$service};
+}
+
+sub _dispatch {
+    my ($self, $sub_uri, $arg) = @_;
+
+    my $res = $self->furl->get(named_sprintf(
+        API_ENDPOINT . "$sub_uri?key=" . $self->api_key, $arg
+    ));
     $self->_catch_error($res);
-    return $res->{content} if $self->raw;
-    return JSON::decode_json($res->{content})->{nowonair_list}->{$service};
+    return $res->{content};
 }
 
 sub _catch_error {
@@ -101,7 +105,6 @@ sub _catch_error {
         my $error_str = sprintf("[Error] %s: %s (%s)", $res->status_line, $fault_str, $fault_detail);
         croak $error_str;
     }
-
 }
 
 # setter of Class::Accessor::Lite::Lazy for `furl`
