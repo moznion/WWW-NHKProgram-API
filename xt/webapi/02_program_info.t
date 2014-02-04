@@ -68,9 +68,7 @@ subtest 'Get response as hashref certainly' => sub {
 };
 
 subtest 'Get response as raw JSON certainly' => sub {
-    $client->raw(1);
-
-    my $json = $client->info({
+    my $json = $client->info_raw({
         area    => '東京',
         service => 'ＮＨＫ総合１',
         id      => '2014020402027',

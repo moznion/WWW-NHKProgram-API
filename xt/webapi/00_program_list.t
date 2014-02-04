@@ -109,9 +109,7 @@ subtest 'Get response as hashref certainly' => sub {
 };
 
 subtest 'Get response as raw JSON certainly' => sub {
-    $client->raw(1);
-
-    my $json = $client->list({
+    my $json = $client->list_raw({
         area    => '東京',
         service => 'ＮＨＫ総合１',
         date    => '2014-02-04',

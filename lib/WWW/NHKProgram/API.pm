@@ -9,7 +9,6 @@ use Text::Sprintf::Named qw/named_sprintf/;
 use Class::Accessor::Lite::Lazy (
     new     => 1,
     ro      => [qw/api_key/],
-    rw      => [qw/raw/],
     ro_lazy => [qw/furl/],
 );
 
@@ -21,8 +20,8 @@ our $VERSION = "0.01";
 
 use constant API_ENDPOINT => "http://api.nhk.or.jp/v1/pg/";
 
-sub list {
-    my ($self, $arg) = @_;
+sub _list {
+    my ($self, $arg, $raw) = @_;
 
     my $area    = fetch_area_id($arg->{area});
     my $service = fetch_service_id($arg->{service});
@@ -30,13 +29,23 @@ sub list {
 
     my $content = $self->_dispatch("list/%(area)s/%(service)s/%(date)s.json", {
         area => $area, service => $service, date => $date,
-    });
-    return $content if $self->raw;
+    }, $raw);
+    return $content if $raw;
     return JSON::decode_json($content)->{list}->{$service};
 }
 
-sub genre {
-    my ($self, $arg) = @_;
+sub list {
+    my $self = shift;
+    $self->_list(@_);
+}
+
+sub list_raw {
+    my $self = shift;
+    $self->_list(@_, 1);
+}
+
+sub _genre {
+    my ($self, $arg, $raw) = @_;
 
     my $area    = fetch_area_id($arg->{area});
     my $service = fetch_service_id($arg->{service});
@@ -45,13 +54,23 @@ sub genre {
 
     my $content = $self->_dispatch("genre/%(area)s/%(service)s/%(genre)s/%(date)s.json", {
         area => $area, service => $service, genre => $genre, date => $date,
-    });
-    return $content if $self->raw;
+    }, $raw);
+    return $content if $raw;
     return JSON::decode_json($content)->{list}->{$service};
 }
 
-sub info {
-    my ($self, $arg) = @_;
+sub genre {
+    my $self = shift;
+    $self->_genre(@_);
+}
+
+sub genre_raw {
+    my $self = shift;
+    $self->_genre(@_, 1);
+}
+
+sub _info {
+    my ($self, $arg, $raw) = @_;
 
     my $area    = fetch_area_id($arg->{area});
     my $service = fetch_service_id($arg->{service});
@@ -64,39 +83,59 @@ sub info {
     );
     my $content = $self->_dispatch("info/%(area)s/%(service)s/%(id)s.json", {
         area => $area, service => $service, id => $id,
-    });
-    return $content if $self->raw;
+    }, $raw);
+    return $content if $raw;
     return JSON::decode_json($content)->{list}->{$service}->[0];
 }
 
-sub now_on_air {
-    my ($self, $arg) = @_;
+sub info {
+    my $self = shift;
+    $self->_info(@_);
+}
+
+sub info_raw {
+    my $self = shift;
+    $self->_info(@_, 1);
+}
+
+sub _now_on_air {
+    my ($self, $arg, $raw) = @_;
 
     my $area    = fetch_area_id($arg->{area});
     my $service = fetch_service_id($arg->{service});
 
     my $content = $self->_dispatch("now/%(area)s/%(service)s.json", {
         area => $area, service => $service,
-    });
-    return $content if $self->raw;
+    }, $raw);
+    return $content if $raw;
     return JSON::decode_json($content)->{nowonair_list}->{$service};
 }
 
+sub now_on_air {
+    my $self = shift;
+    $self->_now_on_air(@_);
+}
+
+sub now_on_air_raw {
+    my $self = shift;
+    $self->_now_on_air(@_, 1);
+}
+
 sub _dispatch {
-    my ($self, $sub_uri, $arg) = @_;
+    my ($self, $sub_uri, $arg, $raw) = @_;
 
     my $res = $self->furl->get(named_sprintf(
         API_ENDPOINT . "$sub_uri?key=" . $self->api_key, $arg
     ));
-    $self->_catch_error($res);
+    $self->_catch_error($res, $raw);
     return $res->{content};
 }
 
 sub _catch_error {
-    my ($self, $res) = @_;
+    my ($self, $res, $raw) = @_;
 
     unless ($res->is_success) {
-        if ($self->raw) {
+        if ($raw) {
             croak $res->{content};
         }
         my $fault = JSON::decode_json($res->{content})->{fault};
@@ -172,13 +211,11 @@ if you want to get information about NHK program API.
 =item * WWW::NHKProgram::API->new();
 
 Constructor. You must give API_KEY through this method.
-And of course you can also specify the other parameters.
 
 e.g.
 
     my $client = WWW::NHKProgram::API->new(
         api_key => '__YOUR_API_KEY__', # <= MUST!
-        raw     => 1,                  # <= OPTIONAL: you can set raw-mode (default: undef)
     );
 
 =item * $client->list()
@@ -258,14 +295,12 @@ Yes,
         service => 'ＮＨＫ総合１',
     });
 
-=item * $client->raw()
+=item * $client->list()
+=item * $client->genre()
+=item * $client->info()
+=item * $client->now_on_air()
 
-Setter for C<raw>. If you set true value into C<raw>, all API methods will return raw JSON (methods usually return hash ref).
-
-    $client->raw(1); # => raw-mode (methods return JSON)
-    $client->raw(0); # => methods return hash ref
-
-raw option is also set by constructor.
+Returns raw JSON response of each API.
 
 =back
 
