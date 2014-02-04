@@ -2,155 +2,67 @@ package WWW::NHKProgram::API;
 use 5.008005;
 use strict;
 use warnings;
-use Carp;
 use Furl;
-use JSON ();
-use Text::Sprintf::Named qw/named_sprintf/;
+use WWW::NHKProgram::API::Area qw/fetch_area_id/;
+use WWW::NHKProgram::API::Date;
+use WWW::NHKProgram::API::Service qw/fetch_service_id/;
+use WWW::NHKProgram::API::Provider;
 use Class::Accessor::Lite::Lazy (
     new     => 1,
     ro      => [qw/api_key/],
-    ro_lazy => [qw/furl/],
+    ro_lazy => [qw/provider/],
 );
-
-use WWW::NHKProgram::API::Area    qw/fetch_area_id/;
-use WWW::NHKProgram::API::Service qw/fetch_service_id/;
-use WWW::NHKProgram::API::Date;
 
 our $VERSION = "0.01";
 
-use constant API_ENDPOINT => "http://api.nhk.or.jp/v1/pg/";
-
-sub _list {
-    my ($self, $arg, $raw) = @_;
-
-    my $area    = fetch_area_id($arg->{area});
-    my $service = fetch_service_id($arg->{service});
-    my $date    = WWW::NHKProgram::API::Date::validate($arg->{date});
-
-    my $content = $self->_dispatch("list/%(area)s/%(service)s/%(date)s.json", {
-        area => $area, service => $service, date => $date,
-    }, $raw);
-    return $content if $raw;
-    return JSON::decode_json($content)->{list}->{$service};
-}
-
 sub list {
     my $self = shift;
-    $self->_list(@_);
+    $self->provider->dispatch('list', @_);
 }
 
 sub list_raw {
     my $self = shift;
-    $self->_list(@_, 1);
-}
-
-sub _genre {
-    my ($self, $arg, $raw) = @_;
-
-    my $area    = fetch_area_id($arg->{area});
-    my $service = fetch_service_id($arg->{service});
-    my $genre   = $arg->{genre};
-    my $date    = WWW::NHKProgram::API::Date::validate($arg->{date});
-
-    my $content = $self->_dispatch("genre/%(area)s/%(service)s/%(genre)s/%(date)s.json", {
-        area => $area, service => $service, genre => $genre, date => $date,
-    }, $raw);
-    return $content if $raw;
-    return JSON::decode_json($content)->{list}->{$service};
+    $self->provider->dispatch('list', @_, 1);
 }
 
 sub genre {
     my $self = shift;
-    $self->_genre(@_);
+    $self->provider->dispatch('genre', @_);
 }
 
 sub genre_raw {
     my $self = shift;
-    $self->_genre(@_, 1);
-}
-
-sub _info {
-    my ($self, $arg, $raw) = @_;
-
-    my $area    = fetch_area_id($arg->{area});
-    my $service = fetch_service_id($arg->{service});
-    my $id      = $arg->{id};
-
-    my $res = $self->furl->get(
-        API_ENDPOINT .
-        "info/$area/$service/$id.json" .
-        "?key=" .  $self->api_key
-    );
-    my $content = $self->_dispatch("info/%(area)s/%(service)s/%(id)s.json", {
-        area => $area, service => $service, id => $id,
-    }, $raw);
-    return $content if $raw;
-    return JSON::decode_json($content)->{list}->{$service}->[0];
+    $self->provider->dispatch('genre', @_, 1);
 }
 
 sub info {
     my $self = shift;
-    $self->_info(@_);
+    $self->provider->dispatch('info', @_);
 }
 
 sub info_raw {
     my $self = shift;
-    $self->_info(@_, 1);
-}
-
-sub _now_on_air {
-    my ($self, $arg, $raw) = @_;
-
-    my $area    = fetch_area_id($arg->{area});
-    my $service = fetch_service_id($arg->{service});
-
-    my $content = $self->_dispatch("now/%(area)s/%(service)s.json", {
-        area => $area, service => $service,
-    }, $raw);
-    return $content if $raw;
-    return JSON::decode_json($content)->{nowonair_list}->{$service};
+    $self->provider->dispatch('info', @_, 1);
 }
 
 sub now_on_air {
     my $self = shift;
-    $self->_now_on_air(@_);
+    $self->provider->dispatch('now', @_);
 }
 
 sub now_on_air_raw {
     my $self = shift;
-    $self->_now_on_air(@_, 1);
+    $self->provider->dispatch('now', @_, 1);
 }
 
-sub _dispatch {
-    my ($self, $sub_uri, $arg, $raw) = @_;
-
-    my $res = $self->furl->get(named_sprintf(
-        API_ENDPOINT . "$sub_uri?key=" . $self->api_key, $arg
-    ));
-    $self->_catch_error($res, $raw);
-    return $res->{content};
-}
-
-sub _catch_error {
-    my ($self, $res, $raw) = @_;
-
-    unless ($res->is_success) {
-        if ($raw) {
-            croak $res->{content};
-        }
-        my $fault = JSON::decode_json($res->{content})->{fault};
-        my $fault_str = $fault->{faultstring};
-        my $fault_detail = $fault->{detail}->{errorcode};
-        my $error_str = sprintf("[Error] %s: %s (%s)", $res->status_line, $fault_str, $fault_detail);
-        croak $error_str;
-    }
-}
-
-# setter of Class::Accessor::Lite::Lazy for `furl`
-sub _build_furl {
-    return Furl->new(
-        agent   => 'WWW::NHKProgram::API (Perl)',
-        timeout => 10,
+sub _build_provider {
+    my $self = shift;
+    return WWW::NHKProgram::API::Provider->new(
+        furl => Furl->new(
+            agent   => 'WWW::NHKProgram::API (Perl)',
+            timeout => 10,
+        ),
+        api_key => $self->api_key,
     );
 }
 
