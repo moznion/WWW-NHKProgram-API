@@ -66,7 +66,7 @@ if you want to get information about NHK program API.
             date    => '2014-02-04',
         });
 
-    And following the same (you must `use utf8;`);
+    And following the same;
 
         my $program_list = $client->list({
             area    => '東京',
@@ -90,7 +90,7 @@ if you want to get information about NHK program API.
             date    => '2014-02-04',
         });
 
-    Yes! you can also specify following when you `use utf8`;
+    Yes! you can also specify following;
 
         my $genre_list = $client->genre({
             area    => '東京',
