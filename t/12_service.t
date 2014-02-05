@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use utf8;
+use Encode qw/decode_utf8/;
 use WWW::NHKProgram::API::Service qw/fetch_service_id/;
 
 use Test::More;
@@ -16,7 +16,7 @@ subtest 'Fetch service id' => sub {
         ok $@, "Specified not exists id";
     };
     subtest 'Retrieve service id by service name' => sub {
-        is fetch_service_id('ＮＨＫＥテレ１'), 'e1';
+        is fetch_service_id(decode_utf8('ＮＨＫＥテレ１')), 'e1';
         is fetch_service_id('ラジオ全て'), 'radio';
 
         eval { fetch_service_id('YAPC::ASIA') };

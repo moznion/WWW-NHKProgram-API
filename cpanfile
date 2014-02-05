@@ -1,5 +1,5 @@
 requires 'Class::Accessor::Lite::Lazy';
-requires 'Encode';
+requires 'Encode', '2.57';
 requires 'Furl';
 requires 'JSON';
 requires 'Text::Sprintf::Named';

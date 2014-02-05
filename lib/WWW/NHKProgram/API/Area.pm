@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use utf8;
 use Carp;
-use Encode qw/encode_utf8/;
+use Encode qw/encode_utf8 decode_utf8/;
 use parent qw/Exporter/;
 our @EXPORT_OK = qw/fetch_area_id/;
 
@@ -76,6 +76,7 @@ sub fetch_area_id {
 sub _retrieve_id_by_name {
     my $name = shift;
 
+    eval { $name = decode_utf8($name) };
     for my $key (keys %{+AREAS}) {
         return $key if AREAS->{$key} eq $name;
     }
