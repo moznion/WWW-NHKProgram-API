@@ -16,26 +16,27 @@ my $client = WWW::NHKProgram::API->new(
     api_key => $api_key,
 );
 
-subtest 'Get response as hashref certainly' => sub {
-    my $program_now = $client->now_on_air({
+my $program_now;
+subtest 'Get response as raw JSON certainly' => sub {
+    my $json = $client->now_on_air_raw({
         area    => 130,
         service => 'g1',
     });
+
+    $program_now = JSON::decode_json($json)->{nowonair_list}->{g1};
     ok $program_now->{previous};
     ok $program_now->{present};
     ok $program_now->{following};
 };
 
-subtest 'Get response as raw JSON certainly' => sub {
-    my $json = $client->now_on_air_raw({
-        area    => '東京',
-        service => 'ＮＨＫ総合１',
-    });
-
-    my $program_now = JSON::decode_json($json)->{nowonair_list}->{g1};
-    ok $program_now->{previous};
-    ok $program_now->{present};
-    ok $program_now->{following};
+subtest 'Get response as hashref certainly' => sub {
+    cmp_deeply(
+        $client->now_on_air({
+            area    => '東京',
+            service => 'ＮＨＫ総合１',
+        }),
+        $program_now,
+    );
 };
 
 done_testing;
