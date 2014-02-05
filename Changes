@@ -2,6 +2,11 @@ Revision history for Perl extension WWW-NHKProgram-API
 
 {{$NEXT}}
 
+0.02 2014-02-05T14:43:31Z
+
+    - Change to not necessity to call `use utf8`
+    - Fix extend tests
+
 0.01 2014-02-05T02:46:03Z
 
     - original version
