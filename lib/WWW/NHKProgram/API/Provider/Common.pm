@@ -28,7 +28,14 @@ sub _catch_error {
         my $fault = JSON::decode_json($res->{content})->{fault};
         my $fault_str = $fault->{faultstring};
         my $fault_detail = $fault->{detail}->{errorcode};
-        my $error_str = sprintf("[Error] %s: %s (%s)", $res->status_line, $fault_str, $fault_detail);
+
+        my $error_str = "[Error] " . $res->status_line;
+        if ($fault_str) {
+            $error_str .= ": $fault_str";
+        }
+        if ($fault_detail) {
+            $error_str .= " ($fault_detail)";
+        }
         croak $error_str;
     }
 }
