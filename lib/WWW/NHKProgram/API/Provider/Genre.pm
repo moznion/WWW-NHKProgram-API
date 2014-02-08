@@ -4,6 +4,7 @@ use warnings;
 use utf8;
 use JSON ();
 use WWW::NHKProgram::API::Area    qw/fetch_area_id/;
+use WWW::NHKProgram::API::Genre   qw/fetch_genre_id/;
 use WWW::NHKProgram::API::Service qw/fetch_service_id/;
 use WWW::NHKProgram::API::Date;
 use WWW::NHKProgram::API::Provider::Common;
@@ -13,7 +14,7 @@ sub call {
 
     my $area    = fetch_area_id($arg->{area});
     my $service = fetch_service_id($arg->{service});
-    my $genre   = $arg->{genre};
+    my $genre   = fetch_genre_id($arg->{genre});
     my $date    = WWW::NHKProgram::API::Date::validate($arg->{date});
 
     my $content = WWW::NHKProgram::API::Provider::Common::call(

@@ -45,7 +45,7 @@ subtest 'Get response as hashref certainly' => sub {
     my $genre_list = $client->genre({
         area    => '東京',
         service => 'ＮＨＫ総合１',
-        genre   => '0000',
+        genre   => '定時・総合',
         date    => $date,
     });
     is scalar @$genre_list, $response_length, 'check response length';
