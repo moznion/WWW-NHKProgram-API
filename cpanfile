@@ -3,6 +3,7 @@ requires 'Encode', '2.57';
 requires 'Furl';
 requires 'JSON';
 requires 'Text::Sprintf::Named';
+requires 'TV::ARIB::ProgramGenre';
 requires 'parent';
 requires 'perl', '5.008005';
 
@@ -20,4 +21,5 @@ on test => sub {
 
 on develop => sub {
     requires 'Test::Perl::Critic';
+    requires 'Time::Piece';
 };
