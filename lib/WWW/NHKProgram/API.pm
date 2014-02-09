@@ -169,7 +169,7 @@ Yes! you can also specify following;
     my $genre_list = $client->genre({
         area    => '東京',
         service => 'ＮＨＫ総合１',
-        genre   => '0000',
+        genre   => '定時・総合',
         date    => '2014-02-04',
     });
 
