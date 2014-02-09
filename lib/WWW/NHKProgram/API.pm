@@ -13,7 +13,7 @@ use Class::Accessor::Lite::Lazy (
     ro_lazy => [qw/provider/],
 );
 
-our $VERSION = "0.02";
+our $VERSION = "0.03";
 
 sub list {
     my $self = shift;

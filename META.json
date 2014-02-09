@@ -39,7 +39,8 @@
             "Test::MinimumVersion" : "0.10108",
             "Test::Perl::Critic" : "0",
             "Test::Pod" : "1.41",
-            "Test::Spellunker" : "v0.2.7"
+            "Test::Spellunker" : "v0.2.7",
+            "Time::Piece" : "0"
          }
       },
       "runtime" : {
@@ -48,6 +49,7 @@
             "Encode" : "2.57",
             "Furl" : "0",
             "JSON" : "0",
+            "TV::ARIB::ProgramGenre" : "0",
             "Text::Sprintf::Named" : "0",
             "parent" : "0",
             "perl" : "5.008005"
@@ -73,5 +75,5 @@
          "web" : "https://github.com/moznion/WWW-NHKProgram-API"
       }
    },
-   "version" : "0.02"
+   "version" : "0.03"
 }
